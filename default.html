@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div id="data2secure">
+        <table>
+            <tr>
+                <td>data row 1</td>
+                <td>$1000.00</td>
+            </tr>
+            <tr>
+                <td>data row 2</td>
+                <td>$2000.00</td>
+            </tr>
+            <tr>
+                <td>data row 3</td>
+                <td>$3000.00</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="data2secure2">
+        <table>
+            <tr>
+                <td>data row 1</td>
+                <td>$1000.00</td>
+            </tr>
+            <tr>
+                <td>data row 2</td>
+                <td>$2000.00</td>
+            </tr>
+            <tr>
+                <td>data row 3</td>
+                <td>$3000.00</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript" id="secure">
+        let dataPreserer = {
+            monitorObject: async function (myObject, X) {
+                try {document.getElementById('secure').remove();} catch (ex) { }
+
+                if (X == undefined) { X = dataPreserer.getKey(myObject); }
+                var Y = dataPreserer.getKey(myObject);
+                if (Y != X) {
+                    //console.log('data modified');
+                    document.getElementsByTagName('html')[0].remove();
+                }
+                setTimeout(function () { dataPreserer.monitorObject(myObject, X) }, 1000);
+            },
+
+            preserveObject: async function (myObject, X, data) {
+                try {document.getElementById('secure').remove();} catch (ex) { }
+
+                if (data == undefined) { data = myObject.innerHTML; }
+
+                if (X == undefined) { X = dataPreserer.getKey(myObject); }
+                var Y = dataPreserer.getKey(myObject);
+                if (Y != X) {
+                    console.log('data modified');
+                    myObject.innerHTML = data;
+                }
+                setTimeout(function () { dataPreserer.preserveObject(myObject, X, data) }, 1000);
+            },
+            getKey : function (myObject) {
+                var x = myObject.innerHTML;
+                return dataPreserer.hashCode(x);
+            },
+            hashCode :function hashCode(str) {
+                var hash = 0, i, chr;
+                if (str.length === 0) return hash;
+                for (i = 0; i < str.length; i++) {
+                    chr = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + chr;
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return hash;
+            }
+        }
+
+        dataPreserer.monitorObject(document.getElementById('data2secure'));
+        dataPreserer.preserveObject(document.getElementById('data2secure2'));
+    </script>
+</body>
+</html>
