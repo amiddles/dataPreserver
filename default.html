@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -52,8 +52,14 @@
     </div>
     <script type="text/javascript" id="secure">
         let dataPreserer = {
-            monitorObject: async function (myObject, X) {
+            monitorObject: function (myObject, X) {
                 try {document.getElementById('secure').remove();} catch (ex) { }
+
+                if (myObject.blockID == X && X != undefined) {
+                    myObject.blockID = 0;
+                    return;
+                };
+                myObject.blockID = 1;
 
                 if (X == undefined) { X = dataPreserer.getKey(myObject); }
                 var Y = dataPreserer.getKey(myObject);
@@ -62,13 +68,19 @@
                     document.getElementsByTagName('html')[0].remove();
                 }
                 setTimeout(function () { dataPreserer.monitorObject(myObject, X) }, 1000);
+                return X;
             },
 
-            preserveObject: async function (myObject, X, data) {
+            preserveObject: function (myObject, X, data) {
                 try {document.getElementById('secure').remove();} catch (ex) { }
 
-                if (data == undefined) { data = myObject.innerHTML; }
+                if (myObject.blockID == X && X != undefined) {
+                    myObject.blockID = 0;
+                    return;
+                };
+                myObject.blockID = 1;
 
+                if (data == undefined) { data = myObject.innerHTML; }
                 if (X == undefined) { X = dataPreserer.getKey(myObject); }
                 var Y = dataPreserer.getKey(myObject);
                 if (Y != X) {
@@ -93,7 +105,10 @@
             }
         }
 
-        dataPreserer.monitorObject(document.getElementById('data2secure'));
+        var myDiv = document.getElementById('data2secure');
+        var x = dataPreserer.monitorObject(myDiv);
+        /* Use to release the block and change the data. */
+        //myDiv.blockID = x;
         dataPreserer.preserveObject(document.getElementById('data2secure2'));
     </script>
 </body>
